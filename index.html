@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0f0f1a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>AdvChat 💬</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Particle Canvas -->
+  <canvas id="particles"></canvas>
+
+  <!-- Join Screen -->
+  <div id="joinScreen" class="screen active">
+    <div class="join-card">
+      <div class="join-logo">
+        <span class="logo-icon">💬</span>
+        <h1 class="logo-text">AdjChat</h1>
+        <p class="logo-sub">Real-time vibes only ✨</p>
+      </div>
+      <div class="join-form">
+        <input type="text" id="nameInput" placeholder="Enter your name..." maxlength="20" autocomplete="off" />
+        <button id="joinBtn" class="btn-primary">Join Chat →</button>
+      </div>
+      <p class="join-hint">No account needed. Just vibe. 🎉</p>
+    </div>
+  </div>
+
+  <!-- Password Modal -->
+  <div id="passwordModal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="modal-icon">🔐</div>
+      <h2 id="modalTitle">Enter Password</h2>
+      <p id="modalDesc">This name has special powers. Enter password to unlock.</p>
+      <input type="password" id="passwordInput" placeholder="Password..." autocomplete="off" />
+      <div class="modal-actions">
+        <button id="passwordSubmit" class="btn-primary">Unlock ✨</button>
+        <button id="passwordSkip" class="btn-ghost">Join as Guest</button>
+      </div>
+      <p id="passwordError" class="error-text hidden">Wrong password! Joining as guest.</p>
+    </div>
+  </div>
+
+  <!-- Chat Screen -->
+  <div id="chatScreen" class="screen hidden">
+
+    <!-- Header -->
+    <header class="chat-header">
+      <div class="header-left">
+        <div class="header-avatar" id="headerAvatar">A</div>
+        <div class="header-info">
+          <span class="header-name" id="headerName">AdjChat</span>
+          <span class="header-status" id="headerStatus">● Online</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="icon-btn" id="onlineBtn" title="Online Users">👥</button>
+        <button class="icon-btn" id="adminMenuBtn" title="Admin Menu" style="display:none">⚙️</button>
+      </div>
+    </header>
+
+    <!-- Online Users Panel -->
+    <div id="onlinePanel" class="side-panel hidden">
+      <div class="panel-header">
+        <span>👥 Online Users</span>
+        <button class="close-panel" id="closeOnlinePanel">✕</button>
+      </div>
+      <ul id="onlineList" class="online-list"></ul>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="side-panel hidden">
+      <div class="panel-header">
+        <span>⚙️ Admin Controls</span>
+        <button class="close-panel" id="closeAdminPanel">✕</button>
+      </div>
+      <div class="admin-controls">
+        <button class="admin-btn danger" id="clearChatBtn">🗑️ Clear All Chat</button>
+        <button class="admin-btn" id="toggleMuteBtn">🔇 Mute Chat</button>
+        <button class="admin-btn accent" id="sendAnnouncementBtn">📢 Send Announcement</button>
+        <button class="admin-btn" id="scrollToPinnedBtn">📌 Scroll to Pinned</button>
+        <button class="admin-btn hearts" id="triggerHeartsBtn">💖 Trigger Hearts</button>
+        <button class="admin-btn emoji" id="triggerEmojiBtn">🎉 Trigger Confetti</button>
+      </div>
+    </div>
+
+    <!-- Pinned Message Bar -->
+    <div id="pinnedBar" class="pinned-bar hidden">
+      <span class="pin-icon">📌</span>
+      <span id="pinnedText" class="pinned-text"></span>
+      <button class="unpin-btn" id="unpinBtn">✕</button>
+    </div>
+
+    <!-- Messages Area -->
+    <main id="messagesArea" class="messages-area">
+      <div id="messagesList" class="messages-list"></div>
+      <div id="typingIndicator" class="typing-indicator hidden">
+        <span class="typing-dot"></span>
+        <span class="typing-dot"></span>
+        <span class="typing-dot"></span>
+        <span class="typing-label" id="typingLabel">someone is typing...</span>
+      </div>
+    </main>
+
+    <!-- Muted Notice -->
+    <div id="mutedNotice" class="muted-notice hidden">🔇 Chat is muted by admin</div>
+
+    <!-- Input Area -->
+    <footer class="chat-footer">
+
+      <!-- Reply Preview Bar -->
+      <div id="replyPreview" class="reply-preview hidden">
+        <div class="reply-preview-inner">
+          <span class="reply-preview-icon">↩</span>
+          <div class="reply-preview-content">
+            <span class="reply-preview-name" id="replyToName"></span>
+            <span class="reply-preview-text" id="replyToText"></span>
+          </div>
+        </div>
+        <button id="cancelReply" class="cancel-reply-btn" title="Cancel reply">✕</button>
+      </div>
+
+      <div class="input-row">
+        <!-- Emoji Trigger -->
+        <button class="emoji-trigger-btn" id="emojiPickerBtn" title="Emoji">😊</button>
+
+        <div class="input-wrapper">
+          <input type="text" id="messageInput" placeholder="Type a message..." maxlength="500" autocomplete="off" />
+          <!-- Emoji Picker Popup -->
+          <div id="emojiPicker" class="emoji-picker hidden"></div>
+        </div>
+
+        <div class="footer-actions">
+          <button class="send-btn" id="sendBtn">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+              <path d="M2 21l21-9L2 3v7l15 2-15 2z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Admin Extras (Sarika) -->
+      <div id="adminExtras" class="admin-extras hidden">
+        <button class="extra-btn highlight" id="highlightBtn">💖 Highlight</button>
+        <button class="extra-btn pin" id="pinMsgBtn">📌 Pin Next</button>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Floating Effects Layer -->
+  <div id="effectsLayer" class="effects-layer" aria-hidden="true"></div>
+
+  <!-- Announcement Toast -->
+  <div id="announcementToast" class="announcement-toast hidden"></div>
+
+  <!-- Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
