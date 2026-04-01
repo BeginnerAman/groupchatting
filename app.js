@@ -40,8 +40,8 @@ let currentPinnedId  = null;  // for force-scroll
 
 // ---- Roles & Passwords ----
 const ROLES = {
-  'aman':   { password: '@aman27',   role: 'aman',  badge: null,  label: null },
-  'sarika': { password: '@sarika27', role: 'admin', badge: '👑',  label: 'Admin' },
+  'deva':   { password: '@deva27',   role: 'aman',  badge: null,  label: null },
+  'aman': { password: '@aman27', role: 'admin', badge: '👑',  label: 'Admin' },
 };
 
 // ---- Quick Reactions ----
@@ -464,7 +464,7 @@ function createMessageElement(key, msg) {
   const isMe    = currentUser && msg.uid === currentUser.uid;
   const isAdmin = currentUser && currentUser.role === 'admin';
   const canDel  = isMe || isAdmin;           // all users can delete own; admin deletes any
-  const canEdit = isAdmin;                   // only admin can edit any message
+  const canEdit = isMe || isAdmin;                   // only admin can edit any message  now both 
 
   // Wrapper
   const wrapper = document.createElement('div');
